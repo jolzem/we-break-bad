@@ -8,6 +8,7 @@ public class MainMenu extends JFrame implements KeyListener {
     private Font font;
     private Timer t;
     private int startTextY = 600;
+    private WavPlayer bgMusic;
     
     public MainMenu() {
         // Set the window properties
@@ -18,10 +19,14 @@ public class MainMenu extends JFrame implements KeyListener {
         setResizable(false);
         setLayout(null);
         
+        
         // Create font from file
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("Heart-Breaking-Bad.ttf")).deriveFont(Font.PLAIN, 48f);
         } catch(Exception e) { e.printStackTrace(); }
+        
+        // start music
+        bgMusic = new WavPlayer("intro.wav");
         
         // Add interaction text
         text = new JLabel("Press space to Play");
@@ -57,6 +62,7 @@ public class MainMenu extends JFrame implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             // Close the current window
             dispose();
+            bgMusic.stop();
             // Create a new GameWindow class
             new GameWindow();
         }

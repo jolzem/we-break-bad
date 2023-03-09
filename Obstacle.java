@@ -40,6 +40,10 @@ public class Obstacle
         return x;
     }
     
+    public void setY(int pY) {
+        y = pY;
+    }
+    
     public JLabel getObst() {
         return label;
     }
