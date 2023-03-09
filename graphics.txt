@@ -1,0 +1,3 @@
+street 800x600
+street obstacles 100x100
+street player ~200 x100
