@@ -49,17 +49,17 @@ public class GameWindow extends JFrame implements KeyListener {
         }
 
         // add player
-        ImageIcon playerImg = new ImageIcon("car-player.png");
+        ImageIcon playerImg = new ImageIcon("img/car-player.png");
         player = new JLabel("", playerImg, JLabel.CENTER);
         player.setBounds(carX, 385, 75, 155);
         add(player);
 
         // Add the background picture
-        ImageIcon streetImg1 = new ImageIcon("street.jpg");
+        ImageIcon streetImg1 = new ImageIcon("img/street.jpg");
         background1 = new JLabel("", streetImg1, JLabel.CENTER);
         background1.setBounds(0, streetY1, 800, 600);
         add(background1);
-        ImageIcon streetImg2 = new ImageIcon("street.jpg");
+        ImageIcon streetImg2 = new ImageIcon("img/street.jpg");
         background2 = new JLabel("", streetImg2, JLabel.CENTER);
         background2.setBounds(0, streetY2, 800, 600);
         add(background2);
