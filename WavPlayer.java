@@ -6,19 +6,15 @@ public class WavPlayer {
     
     public WavPlayer(String filename) {
         try {
-            startPlayer(filename);
+            // create a URL for the wav file
+            URL url = new URL("file:///" + System.getProperty("user.dir").replace("\\", "/") + "/sounds/" + filename);
+
+            // create a player for the wav file
+            player = Manager.createPlayer(url);
+
+            // start playing the wav file
+            player.start();
         } catch (Exception e) {}
-    }
-    
-    public void startPlayer(String filename) throws Exception {
-        // create a URL for the wav file
-        URL url = new URL("file:///" + System.getProperty("user.dir").replace("\\", "/") + "/sounds/" + filename);
-
-        // create a player for the wav file
-        player = Manager.createPlayer(url);
-
-        // start playing the wav file
-        player.start();
     }
     
     public void stop() {

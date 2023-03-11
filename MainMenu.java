@@ -21,6 +21,7 @@ public class MainMenu extends JFrame implements KeyListener {
         
         
         // Create font from file
+        // source: https://stackoverflow.com/questions/21081586/using-a-custom-font-for-a-jlabel
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("Heart-Breaking-Bad.ttf")).deriveFont(Font.PLAIN, 48f);
         } catch(Exception e) { e.printStackTrace(); }
@@ -63,8 +64,7 @@ public class MainMenu extends JFrame implements KeyListener {
             // Close the current window
             dispose();
             bgMusic.stop();
-            // Create a new GameWindow class
-            new GameWindow();
+            new WebPageViewer("Titel1.html", "intro.wav", 35000, "GameWindow");
         }
     }
     public void keyReleased(KeyEvent e) {}

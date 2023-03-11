@@ -140,6 +140,7 @@ public class GameWindow extends JFrame implements KeyListener {
         if(counter == boostTimer) speed = oldSpeed;
 
         // handle obstacles
+        // source: https://www.w3schools.com/java/java_foreach_loop.asp
         for(Obstacle obst : obstacles) {
             obst.stepY();
             // renew obstacle

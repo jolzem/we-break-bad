@@ -1,3 +1,8 @@
 street 800x600
 street obstacles 100x100
 street player ~200 x100
+
+VIDEO :
+gif format 800x600
+embedded in html
+seperate wav audio
