@@ -1,15 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.AbstractSet;
 
 public class GameWindow extends JFrame implements KeyListener {
     private JLabel background1;
     private JLabel background2;
     private JLabel text;
-    private JLabel player;
+    private RotatedLabel player;
     private Font font;
     private Timer t;
     private WavPlayer bgMusic;
+    private AbstractSet<Integer> activeKeys;
 
     private int streetY1 = 0;
     private int streetY2 = -600;
@@ -18,12 +20,13 @@ public class GameWindow extends JFrame implements KeyListener {
     private int oldSpeed = speed;
     private int obsSpeed = speed;
     private int carX = 365;
+    private int carRot = 0;
     private int boostTimer;
     private int timesHit = 0;
     private boolean inputDisabled = false;
     private boolean boostActive = false;
 
-    private Obstacle[] obstacles = {new Obstacle(speed), new Obstacle(speed), new Obstacle(speed), new Obstacle(speed)};
+    private Obstacle[] obstacles = {new Obstacle(speed)};
 
     public GameWindow() {
         // Set the window properties
@@ -50,16 +53,16 @@ public class GameWindow extends JFrame implements KeyListener {
 
         // add player
         ImageIcon playerImg = new ImageIcon("img/car-player.png");
-        player = new JLabel("", playerImg, JLabel.CENTER);
+        player = new RotatedLabel("", playerImg, JLabel.CENTER, 0);
         player.setBounds(carX, 385, 75, 155);
         add(player);
 
         // Add the background picture
-        ImageIcon streetImg1 = new ImageIcon("img/street.jpg");
+        ImageIcon streetImg1 = new ImageIcon("img/street.png");
         background1 = new JLabel("", streetImg1, JLabel.CENTER);
         background1.setBounds(0, streetY1, 800, 600);
         add(background1);
-        ImageIcon streetImg2 = new ImageIcon("img/street.jpg");
+        ImageIcon streetImg2 = new ImageIcon("img/street2.png");
         background2 = new JLabel("", streetImg2, JLabel.CENTER);
         background2.setBounds(0, streetY2, 800, 600);
         add(background2);
@@ -83,45 +86,39 @@ public class GameWindow extends JFrame implements KeyListener {
 
     // Key listener implementation
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyCode()) {
-            /*case KeyEvent.VK_SPACE:
-                if(!boostActive) {
-                    boostTimer = counter+200;
-                    oldSpeed = speed;
-                    speed += 2;
-                    break;
-                }*/
-            case KeyEvent.VK_W:
-                speed = oldSpeed;
-                break;
-            case KeyEvent.VK_A:
-                if(!inputDisabled) {
-                    if(carX > 0) carX -= oldSpeed;
-                    player.setBounds(carX, 385, 75, 155);
-                    break;
-                }
-            case KeyEvent.VK_D:
-                if(!inputDisabled) {
-                    if(carX < 725) carX += oldSpeed;
-                    player.setBounds(carX, 385, 75, 155);
-                    break;
-                }
-        }
+        activeKeys.add(e.getKeyCode());
+        handleInput();
     }
 
     public void keyReleased(KeyEvent e) {
-        switch(e.getKeyCode()) {
-            case KeyEvent.VK_W:
-                oldSpeed = speed;
-                speed = 0;
-                break;
-        }
+        activeKeys.remove(e.getKeyCode());
+        handleInput();
     }
 
     public void keyTyped(KeyEvent e) {}
 
     public static void main(String[] args) {
         new GameWindow();
+    }
+
+    public void handleInput() {
+        if(activeKeys.contains(KeyEvent.VK_W) && activeKeys.contains(KeyEvent.VK_A)) {
+            player.setAngle(0.825);
+        } else if(activeKeys.contains(KeyEvent.VK_W) && activeKeys.contains(KeyEvent.VK_D)) {
+            carRot = 45;
+        } else if(activeKeys.contains(KeyEvent.VK_W)) {
+            speed = oldSpeed;
+        } else if(activeKeys.contains(KeyEvent.VK_A)) {
+            if(!inputDisabled) {
+                if(carX > 0) carX -= oldSpeed;
+                player.setBounds(carX, 385, 75, 155);
+            }
+        } else if(activeKeys.contains(KeyEvent.VK_D)) {
+            if(!inputDisabled) {
+                if(carX < 725) carX += oldSpeed;
+                player.setBounds(carX, 385, 75, 155);
+            }
+        }
     }
 
     public void doOnTick() {
@@ -150,7 +147,7 @@ public class GameWindow extends JFrame implements KeyListener {
             }
             // handle collision
             if(obst.touches(carX, 385)) {
-                speed -= 2;
+                // speed -= 2;
                 oldSpeed = speed;
                 timesHit++;
                 renewObstacle(obst);
@@ -160,10 +157,10 @@ public class GameWindow extends JFrame implements KeyListener {
         }
 
         // when player has hit too many obstacles, he has lost
-        if(timesHit >= 2) {
+        if(timesHit >= 399999) {
             speed = 0;
             inputDisabled = true;
-            System.out.println("lost");
+            //System.out.println("lost");
             t.stop();
             bgMusic.stop();
             new WavPlayer("lost.wav");
@@ -172,7 +169,7 @@ public class GameWindow extends JFrame implements KeyListener {
         if(counter > 1500) {
             speed = 0;
             inputDisabled = true;
-            System.out.println("won");
+            //System.out.println("won");
             t.stop();
             bgMusic.stop();
             new WavPlayer("intro.wav");
@@ -184,10 +181,30 @@ public class GameWindow extends JFrame implements KeyListener {
 
     public void renewObstacle(Obstacle obst) {
         obst.setY((int)(Math.random()*(-700)-100));
+        obst.setX((int)(Math.random()*500)+100);
         obst.getObst().setBounds(obst.getX(), obst.getY(), 100, 100);
     }
 
     public int getSpeed() {
         return speed;
+    }
+
+    private class RotatedLabel extends JLabel {
+        double angle;
+        public RotatedLabel(String text, Icon image, int horizontalAlignment, double pAngle) {
+            super(text, image, horizontalAlignment);
+            angle = pAngle;
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            Graphics2D gx = (Graphics2D) g;
+            gx.rotate(angle, getX() + getWidth()/2, getY() + getHeight()/2);
+            super.paintComponent(g);
+        }
+        
+        public void setAngle(double pAngle) {
+            angle = pAngle;
+        }
     }
 }
